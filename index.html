@@ -3,63 +3,139 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>موبائل انوینٹری ایپ</title>
-    <!-- Tailwind CSS -->
+    <title>انوینٹری مینجمنٹ سسٹم</title>
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
             darkMode: 'class',
         }
     </script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;700&family=Plus+Jakarta+Sans:wght@400;600;700&display=swap');
+        body { font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif; }
+    </style>
 </head>
-<body class="bg-black text-white dark:bg-black dark:text-white transition-colors duration-300 min-h-screen flex flex-col">
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col pb-20 transition-colors duration-300">
 
-    <!-- Header / ٹاپ بار -->
-    <header class="w-full bg-neutral-900 border-b border-neutral-800 px-4 py-3 flex justify-between items-center sticky top-0 z-50">
+    <!-- Header -->
+    <header class="bg-slate-900/80 backdrop-blur-md border-b border-slate-800 sticky top-0 z-40 px-4 py-3 flex justify-between items-center shadow-lg">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white font-bold text-xl shadow-indigo-500/20 shadow-lg">
+                📦
+            </div>
+            <div>
+                <h1 class="font-bold text-lg leading-tight text-white">اسٹاک مینجر</h1>
+                <p class="text-xs text-slate-400">انوینٹری & خرچہ ٹریکر</p>
+            </div>
+        </div>
         
-        <!-- Left Side: Settings Icon -->
-        <button class="p-2 rounded-full hover:bg-neutral-800 text-slate-300">
-            ⚙️
-        </button>
-
-        <!-- Center: Dark / Light Mode Toggle Button -->
-        <button id="theme-toggle" onclick="toggleTheme()" class="p-2 rounded-full bg-neutral-800 text-xl">
-            ☀️
-        </button>
-
-        <!-- Right Side: 3-Dots Menu Icon -->
-        <button class="p-2 rounded-full hover:bg-neutral-800 text-slate-300">
-            ⋮
-        </button>
-
+        <div class="flex items-center gap-2">
+            <button id="theme-toggle" onclick="toggleTheme()" class="w-10 h-10 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-amber-400 hover:bg-slate-700 transition">
+                <i class="fa-solid fa-sun text-lg"></i>
+            </button>
+            <button class="w-10 h-10 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-300 hover:bg-slate-700 transition">
+                <i class="fa-solid fa-gear text-lg"></i>
+            </button>
+        </div>
     </header>
 
-    <!-- Main Content Area -->
-    <main class="flex-1 p-4 flex flex-col items-center justify-center text-center">
-        <h1 class="text-xl font-bold text-slate-300">ہماری ایپ کا بنیادی ڈھانچہ</h1>
-        <p class="text-sm text-slate-500 mt-2">اگلے مرحلے میں ہم یہاں سامان اور اسٹاک کی تفصیلات شامل کریں گے۔</p>
+    <main class="flex-1 p-4 max-w-xl mx-auto w-full space-y-6">
+
+        <!-- Summary Cards / ڈیش بورڈ -->
+        <div class="grid grid-cols-2 gap-3">
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-sm">
+                <div class="flex items-center justify-between text-slate-400 mb-2">
+                    <span class="text-xs font-medium">کل ایٹمز</span>
+                    <i class="fa-solid fa-boxes-stacked text-indigo-400"></i>
+                </div>
+                <div class="text-2xl font-bold text-white" id="total-items">12</div>
+            </div>
+
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-sm">
+                <div class="flex items-center justify-between text-slate-400 mb-2">
+                    <span class="text-xs font-medium">کل مالیت</span>
+                    <i class="fa-solid fa-wallet text-emerald-400"></i>
+                </div>
+                <div class="text-2xl font-bold text-emerald-400" id="total-value">Rs 45,000</div>
+            </div>
+        </div>
+
+        <!-- Search Bar -->
+        <div class="relative">
+            <i class="fa-solid fa-magnifying-glass absolute right-3.5 top-3.5 text-slate-500"></i>
+            <input type="text" placeholder="سامان تلاش کریں..." class="w-full bg-slate-900 border border-slate-800 text-white rounded-xl pr-10 pl-4 py-3 text-sm focus:outline-none focus:border-indigo-500 transition shadow-inner">
+        </div>
+
+        <!-- Inventory List Section -->
+        <div>
+            <div class="flex justify-between items-center mb-3 px-1">
+                <h2 class="font-bold text-slate-200">موجودہ اسٹاک</h2>
+                <span class="text-xs text-indigo-400 font-semibold cursor-pointer">سب دیکھیں</span>
+            </div>
+
+            <div class="space-y-3" id="stock-list">
+                <!-- Item Card 1 -->
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex items-center justify-between shadow-sm hover:border-slate-700 transition">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 rounded-xl bg-slate-800 flex items-center justify-center text-slate-300 font-bold text-lg">
+                            📱
+                        </div>
+                        <div>
+                            <h3 class="font-semibold text-white">موبائل کور</h3>
+                            <p class="text-xs text-slate-400">قیمت: Rs 250 | تعداد: <span class="text-indigo-400 font-bold">40</span></p>
+                        </div>
+                    </div>
+                    <button class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs rounded-lg transition border border-slate-700">
+                        ترمیم
+                    </button>
+                </div>
+
+                <!-- Item Card 2 -->
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex items-center justify-between shadow-sm hover:border-slate-700 transition">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 rounded-xl bg-slate-800 flex items-center justify-center text-slate-300 font-bold text-lg">
+                            🎧
+                        </div>
+                        <div>
+                            <h3 class="font-semibold text-white">وائرلیس ہینڈز فری</h3>
+                            <p class="text-xs text-slate-400">قیمت: Rs 1,200 | تعداد: <span class="text-amber-400 font-bold">5 (کم اسٹاک)</span></p>
+                        </div>
+                    </div>
+                    <button class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs rounded-lg transition border border-slate-700">
+                        ترمیم
+                    </button>
+                </div>
+            </div>
+        </div>
+
     </main>
 
-    <!-- Theme Switcher Logic -->
+    <!-- Floating Action Button (Add Item) -->
+    <button class="fixed bottom-6 left-6 right-6 max-w-xl mx-auto bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3.5 px-6 rounded-2xl shadow-lg shadow-indigo-600/30 flex items-center justify-center gap-2 transition active:scale-95">
+        <i class="fa-solid fa-plus"></i>
+        <span>نیا سامان شامل کریں</span>
+    </button>
+
     <script>
         function toggleTheme() {
             const html = document.documentElement;
             const toggleBtn = document.getElementById('theme-toggle');
 
             if (html.classList.contains('dark')) {
-                // Switch to Light Mode
                 html.classList.remove('dark');
-                html.classList.remove('bg-black', 'text-white');
-                html.classList.add('bg-white', 'text-black');
-                toggleBtn.textContent = '🌙'; // چاند کا نشان
+                document.body.classList.replace('bg-slate-950', 'bg-slate-100');
+                document.body.classList.replace('text-slate-100', 'text-slate-900');
+                toggleBtn.innerHTML = '<i class="fa-solid fa-moon text-lg text-slate-700"></i>';
             } else {
-                // Switch to Dark Mode (Black)
                 html.classList.add('dark');
-                html.classList.remove('bg-white', 'text-black');
-                html.classList.add('bg-black', 'text-white');
-                toggleBtn.textContent = '☀️'; // سورج کا نشان
+                document.body.classList.replace('bg-slate-100', 'bg-slate-950');
+                document.body.classList.replace('text-slate-900', 'text-slate-100');
+                toggleBtn.innerHTML = '<i class="fa-solid fa-sun text-lg text-amber-400"></i>';
             }
         }
     </script>
 </body>
-  </html>
+    </html>
