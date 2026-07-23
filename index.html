@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ur" dir="rtl" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>موبائل انوینٹری ایپ</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+        }
+    </script>
+</head>
+<body class="bg-black text-white dark:bg-black dark:text-white transition-colors duration-300 min-h-screen flex flex-col">
+
+    <!-- Header / ٹاپ بار -->
+    <header class="w-full bg-neutral-900 border-b border-neutral-800 px-4 py-3 flex justify-between items-center sticky top-0 z-50">
+        
+        <!-- Left Side: Settings Icon -->
+        <button class="p-2 rounded-full hover:bg-neutral-800 text-slate-300">
+            ⚙️
+        </button>
+
+        <!-- Center: Dark / Light Mode Toggle Button -->
+        <button id="theme-toggle" onclick="toggleTheme()" class="p-2 rounded-full bg-neutral-800 text-xl">
+            ☀️
+        </button>
+
+        <!-- Right Side: 3-Dots Menu Icon -->
+        <button class="p-2 rounded-full hover:bg-neutral-800 text-slate-300">
+            ⋮
+        </button>
+
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 p-4 flex flex-col items-center justify-center text-center">
+        <h1 class="text-xl font-bold text-slate-300">ہماری ایپ کا بنیادی ڈھانچہ</h1>
+        <p class="text-sm text-slate-500 mt-2">اگلے مرحلے میں ہم یہاں سامان اور اسٹاک کی تفصیلات شامل کریں گے۔</p>
+    </main>
+
+    <!-- Theme Switcher Logic -->
+    <script>
+        function toggleTheme() {
+            const html = document.documentElement;
+            const toggleBtn = document.getElementById('theme-toggle');
+
+            if (html.classList.contains('dark')) {
+                // Switch to Light Mode
+                html.classList.remove('dark');
+                html.classList.remove('bg-black', 'text-white');
+                html.classList.add('bg-white', 'text-black');
+                toggleBtn.textContent = '🌙'; // چاند کا نشان
+            } else {
+                // Switch to Dark Mode (Black)
+                html.classList.add('dark');
+                html.classList.remove('bg-white', 'text-black');
+                html.classList.add('bg-black', 'text-white');
+                toggleBtn.textContent = '☀️'; // سورج کا نشان
+            }
+        }
+    </script>
+</body>
+  </html>
