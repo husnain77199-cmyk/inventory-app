@@ -1,9 +1,10 @@
+
 <!DOCTYPE html>
-<html lang="ur" dir="rtl" class="dark">
+<html lang="ur" dir="ltr" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>انوینٹری ایکسل شیٹ & مینجمنٹ</title>
+    <title>اسٹاک ایکسل شیٹ</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -15,9 +16,8 @@
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap');
         body { font-family: 'Plus Jakarta Sans', sans-serif; }
         
-        /* Excel Table Custom Scrollbar & Grid Styling */
         .excel-table-container {
-            max-height: calc(100vh - 180px);
+            max-height: calc(100vh - 160px);
             overflow: auto;
         }
         .excel-cell {
@@ -28,7 +28,7 @@
         }
         .excel-cell:focus {
             border: 2px solid #3b82f6 !important;
-            background-color: rgba(59, 130, 246, 0.1);
+            background-color: rgba(59, 130, 246, 0.15);
         }
     </style>
 </head>
@@ -37,7 +37,7 @@
     <!-- Header / ٹاپ بار -->
     <header class="bg-slate-900 border-b border-slate-800 px-4 py-2.5 flex justify-between items-center shadow-md">
         <div class="flex items-center gap-3">
-            <div class="w-9 h-9 rounded-xl bg-indigo-600 flex items-center justify-center text-white font-bold text-lg">
+            <div class="w-9 h-9 rounded-xl bg-indigo-600 flex items-center justify-center text-white font-bold text-lg shadow-indigo-500/20 shadow-lg">
                 📊
             </div>
             <div>
@@ -46,14 +46,10 @@
             </div>
         </div>
         
-        <div class="flex items-center gap-2">
-            <button id="theme-toggle" onclick="toggleTheme()" class="w-9 h-9 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-amber-400 hover:bg-slate-700">
-                <i class="fa-solid fa-sun"></i>
-            </button>
-            <button onclick="openSettings()" class="w-9 h-9 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-300 hover:bg-slate-700">
-                <i class="fa-solid fa-gear"></i>
-            </button>
-        </div>
+        <!-- سیٹنگز بٹن -->
+        <button onclick="openSettings()" class="w-9 h-9 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-300 hover:bg-slate-700 transition">
+            <i class="fa-solid fa-gear text-lg"></i>
+        </button>
     </header>
 
     <!-- Formula / Name Box Bar -->
@@ -63,29 +59,29 @@
             <span id="name-box" class="font-bold text-indigo-400 w-12 text-center">A1</span>
         </div>
         <div class="flex-1 bg-slate-950 border border-slate-800 px-3 py-1 rounded-lg text-slate-300 flex items-center gap-2">
-            <span class="text-slate-500 italic">fx</span>
-            <input type="text" id="formula-bar" placeholder="ڈیٹا یا فارمولا درج کریں..." class="bg-transparent w-full focus:outline-none text-xs">
+            <span class="text-slate-500 italic font-bold">fx</span>
+            <input type="text" id="formula-bar" oninput="syncFormulaToCell()" placeholder="ڈیٹا یا فارمولا درج کریں..." class="bg-transparent w-full focus:outline-none text-xs text-white">
         </div>
     </div>
 
     <!-- Excel Grid Table Section -->
     <main class="flex-1 p-2">
         <div class="excel-table-container bg-slate-900 border border-slate-800 rounded-xl shadow-inner relative">
-            <table class="w-full text-xs text-center border-collapse" id="excel-table">
+            <table class="w-full text-xs text-left border-collapse" id="excel-table">
                 <thead>
                     <tr class="bg-slate-800 text-slate-400 sticky top-0 z-20" id="table-header">
-                        <th class="p-2 border border-slate-700 bg-slate-800 min-w-[50px] w-[50px] sticky right-0 z-30">#</th>
-                        <!-- کالم JS کے ذریعے بنیں گے -->
+                        <th class="p-2 border border-slate-700 bg-slate-800 min-w-[50px] w-[50px] text-center sticky left-0 z-30">#</th>
+                        <!-- کالم A, B, C... AA, AB... JS سے بنیں گے -->
                     </tr>
                 </thead>
                 <tbody id="table-body">
-                    <!-- 500 روز JS کے ذریعے بنیں گی -->
+                    <!-- 1000 روز JS کے ذریعے بنیں گی -->
                 </tbody>
             </table>
         </div>
     </main>
 
-    <!-- Settings Modal (زبانیں اور سیٹنگز) -->
+    <!-- Main Settings Modal -->
     <div id="settings-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
         <div class="bg-slate-900 border border-slate-800 w-full max-w-md rounded-2xl p-5 space-y-4 shadow-2xl">
             <div class="flex justify-between items-center border-b border-slate-800 pb-3">
@@ -95,30 +91,53 @@
                 </button>
             </div>
 
-            <!-- Language Section -->
-            <div>
-                <label class="block text-xs font-semibold text-slate-300 mb-2">زبان منتخب کریں (Select Language):</label>
-                
-                <!-- Search Box -->
-                <div class="relative mb-3">
-                    <i class="fa-solid fa-magnifying-glass absolute right-3 top-3 text-slate-500"></i>
-                    <input type="text" id="lang-search" oninput="filterLanguages()" placeholder="زبان تلاش کریں..." class="w-full bg-slate-950 border border-slate-800 text-white rounded-xl pr-9 pl-3 py-2 text-xs focus:outline-none focus:border-indigo-500">
+            <!-- Main Menu Options -->
+            <div id="settings-main-menu" class="space-y-3">
+                <!-- Theme Toggle Button -->
+                <div onclick="toggleTheme()" class="p-3 bg-slate-950 border border-slate-800 rounded-xl flex justify-between items-center cursor-pointer hover:border-slate-700 transition">
+                    <div class="flex items-center gap-3">
+                        <i id="theme-icon" class="fa-solid fa-moon text-indigo-400 text-lg"></i>
+                        <span class="text-xs font-semibold text-slate-200">تھیم بدلیں (Theme Mode)</span>
+                    </div>
+                    <span id="theme-text" class="text-xs text-slate-400 font-bold">Dark Mode</span>
                 </div>
 
-                <!-- Languages List -->
-                <div id="language-list" class="space-y-1.5 max-h-48 overflow-y-auto pr-1">
-                    <!-- Languages will render here -->
+                <!-- Language Submenu Button -->
+                <div onclick="showLanguageSubmenu()" class="p-3 bg-slate-950 border border-slate-800 rounded-xl flex justify-between items-center cursor-pointer hover:border-slate-700 transition">
+                    <div class="flex items-center gap-3">
+                        <i class="fa-solid fa-language text-emerald-400 text-lg"></i>
+                        <span class="text-xs font-semibold text-slate-200">زبان (Language)</span>
+                    </div>
+                    <i class="fa-solid fa-chevron-right text-xs text-slate-500"></i>
                 </div>
             </div>
 
+            <!-- Language Submenu (Hidden by Default) -->
+            <div id="settings-lang-menu" class="hidden space-y-3">
+                <button onclick="hideLanguageSubmenu()" class="text-xs text-indigo-400 font-semibold flex items-center gap-1 mb-2">
+                    <i class="fa-solid fa-arrow-left"></i> واپس سیٹنگز
+                </button>
+
+                <!-- Search Box -->
+                <div class="relative">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-slate-500"></i>
+                    <input type="text" id="lang-search" oninput="filterLanguages()" placeholder="Search language / زبان تلاش کریں..." class="w-full bg-slate-950 border border-slate-800 text-white rounded-xl pl-9 pr-3 py-2 text-xs focus:outline-none focus:border-indigo-500">
+                </div>
+
+                <!-- Languages List -->
+                <div id="language-list" class="space-y-1.5 max-h-48 overflow-y-auto pr-1"></div>
+            </div>
+
             <button onclick="closeSettings()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-2.5 rounded-xl transition text-xs">
-                سیو کریں
+                بند کریں
             </button>
         </div>
     </div>
 
     <script>
-        // کالمز تیار کرنے کا فنکشن (A-Z اور پھر AA, AB...)
+        let activeCell = null;
+
+        // کالمز بنانے کی منطق (A-Z اور پھر AA, AB...)
         function getColumnName(n) {
             let name = "";
             while (n > 0) {
@@ -129,34 +148,34 @@
             return name;
         }
 
-        const TOTAL_COLS = 30; // A سے AD تک کالمز
-        const TOTAL_ROWS = 500; // 1 سے 500 تک روز
+        const TOTAL_COLS = 35; // A سے AI تک کالمز
+        const TOTAL_ROWS = 1000; // 1 سے 1000 تک روز
 
-        // ایکسل شیٹ بنانا
+        // ایکسل شیٹ کی ساخت
         function buildExcelGrid() {
             const headerRow = document.getElementById('table-header');
             const tbody = document.getElementById('table-body');
 
-            // 1. کالم ہیڈرز بنائیں
+            // 1. کالم ہیڈرز (A, B... Z, AA, AB...)
             for (let c = 1; c <= TOTAL_COLS; c++) {
                 const colName = getColumnName(c);
                 const th = document.createElement('th');
-                th.className = "p-2 border border-slate-700 bg-slate-800 font-bold text-slate-300";
+                th.className = "p-2 border border-slate-700 bg-slate-800 font-bold text-slate-300 text-center";
                 th.innerText = colName;
                 headerRow.appendChild(th);
             }
 
-            // 2. 500 روز بنائیں
+            // 2. 1000 روز
             for (let r = 1; r <= TOTAL_ROWS; r++) {
                 const tr = document.createElement('tr');
                 
-                // رو نمبر (Row Number)
+                // رو نمبر (#) بائیں طرف
                 const tdNum = document.createElement('td');
-                tdNum.className = "p-1 border border-slate-800 bg-slate-800 text-slate-400 font-semibold sticky right-0 z-10";
+                tdNum.className = "p-1 border border-slate-800 bg-slate-800 text-slate-400 font-semibold text-center sticky left-0 z-10";
                 tdNum.innerText = r;
                 tr.appendChild(tdNum);
 
-                // سیلز (Cells)
+                // سیلز
                 for (let c = 1; c <= TOTAL_COLS; c++) {
                     const colName = getColumnName(c);
                     const td = document.createElement('td');
@@ -164,18 +183,31 @@
                     
                     const cellInput = document.createElement('div');
                     cellInput.contentEditable = "true";
-                    cellInput.className = "excel-cell p-1 text-right text-slate-200 overflow-hidden whitespace-nowrap";
+                    cellInput.className = "excel-cell p-1 text-left text-slate-200 overflow-hidden whitespace-nowrap";
                     cellInput.dataset.cellId = `${colName}${r}`;
 
-                    // سیل پر کلک کرنے سے نیم باکس اپڈیٹ ہوگا
+                    // سیل پر فوکس اور ٹائپ کرنے پر فارمولا بار اپڈیٹ
                     cellInput.addEventListener('focus', function() {
+                        activeCell = this;
                         document.getElementById('name-box').innerText = this.dataset.cellId;
+                        document.getElementById('formula-bar').value = this.innerText;
+                    });
+
+                    cellInput.addEventListener('input', function() {
+                        document.getElementById('formula-bar').value = this.innerText;
                     });
 
                     td.appendChild(cellInput);
                     tr.appendChild(td);
                 }
                 tbody.appendChild(tr);
+            }
+        }
+
+        // فارمولا بار سے سیل میں ڈیٹا بھیجنا
+        function syncFormulaToCell() {
+            if (activeCell) {
+                activeCell.innerText = document.getElementById('formula-bar').value;
             }
         }
 
@@ -195,7 +227,7 @@
                 item.onclick = () => selectLanguage(lang.id);
                 item.className = `p-2.5 rounded-xl border cursor-pointer text-xs flex justify-between items-center transition ${
                     lang.selected 
-                    ? 'bg-blue-600 text-white border-blue-500 font-bold shadow-md shadow-blue-500/20' 
+                    ? 'bg-blue-600 text-white border-blue-500 font-bold shadow-md' 
                     : 'bg-slate-950 border-slate-800 text-slate-300 hover:border-slate-700'
                 }`;
                 item.innerHTML = `
@@ -208,8 +240,6 @@
 
         function filterLanguages() {
             const query = document.getElementById('lang-search').value.toLowerCase().trim();
-            
-            // کاپی بنائیں
             let filtered = [...languages];
 
             if (query !== '') {
@@ -221,7 +251,6 @@
                     return 0;
                 });
             }
-
             renderLanguages(filtered);
         }
 
@@ -230,22 +259,48 @@
             filterLanguages();
         }
 
-        // تھیم بدلنا (Dark/Light)
+        // تھیم سویچنگ (Light/Dark Mode)
         function toggleTheme() {
-            document.documentElement.classList.toggle('dark');
+            const html = document.documentElement;
+            const themeIcon = document.getElementById('theme-icon');
+            const themeText = document.getElementById('theme-text');
+
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                document.body.classList.replace('bg-slate-950', 'bg-slate-100');
+                document.body.classList.replace('text-slate-100', 'text-slate-900');
+                themeIcon.className = "fa-solid fa-sun text-amber-500 text-lg";
+                themeText.innerText = "Light Mode";
+            } else {
+                html.classList.add('dark');
+                document.body.classList.replace('bg-slate-100', 'bg-slate-950');
+                document.body.classList.replace('text-slate-900', 'text-slate-100');
+                themeIcon.className = "fa-solid fa-moon text-indigo-400 text-lg";
+                themeText.innerText = "Dark Mode";
+            }
         }
 
-        // سیٹنگز موڈل کھولنا / بند کرنا
+        // سیٹنگز کے مینو نیویگیشن
         function openSettings() {
             document.getElementById('settings-modal').classList.remove('hidden');
-            renderLanguages(languages);
+            hideLanguageSubmenu();
         }
 
         function closeSettings() {
             document.getElementById('settings-modal').classList.add('hidden');
         }
 
-        // پیج لوڈ ہوتے ہی ایکسل شیٹ تیار کرنا
+        function showLanguageSubmenu() {
+            document.getElementById('settings-main-menu').classList.add('hidden');
+            document.getElementById('settings-lang-menu').classList.remove('hidden');
+            renderLanguages(languages);
+        }
+
+        function hideLanguageSubmenu() {
+            document.getElementById('settings-lang-menu').classList.add('hidden');
+            document.getElementById('settings-main-menu').classList.remove('hidden');
+        }
+
         window.onload = function() {
             buildExcelGrid();
         };
